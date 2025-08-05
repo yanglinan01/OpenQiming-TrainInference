@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.ModelTrainDao">
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.model.ModelTrain">
+        select a.*,
+        from meta.mm_model_train a
+        <where>
+            <if test="modelTrain !=null and modelTrain.id != null and modelTrain.id !=''">
+                and a.id = #{modelTrain.id}
+            </if>
+            <if test="modelTrain !=null and modelTrain.displayName != null and modelTrain.displayName !=''">
+                and upper(a.display_name) like concat('%', upper(#{modelTrain.displayName}), '%')
+            </if>
+            <if test="modelTrain !=null and modelTrain.modelId != null and modelTrain.modelId !=''">
+                and a.model_id = #{modelTrain.modelId}
+            </if>
+            <if test="modelTrain !=null and modelTrain.trainType != null and modelTrain.trainType !=''">
+                and a.train_type = #{modelTrain.trainType}
+            </if>
+            <if test="modelTrain !=null and modelTrain.type != null and modelTrain.type !=''">
+                and a.train_type = #{modelTrain.type}
+            </if>
+            <if test="modelTrain !=null and modelTrain.trainMethod != null and modelTrain.trainMethod !=''">
+                and a.train_method = #{modelTrain.trainMethod}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteByModelId" parameterType="Long">
+        delete
+        from meta.mm_model_train
+        where model_id = #{modelId}
+    </delete>
+</mapper>

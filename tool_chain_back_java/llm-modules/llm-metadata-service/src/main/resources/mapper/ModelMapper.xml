@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.ModelDao">
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.model.ModelVO">
+        select a.*,
+        b.train_method,
+        b.train_type
+        from meta.mm_model a
+        left join (
+            select string_agg(distinct tr.train_method, ',') train_method,
+                   string_agg(distinct tr.train_type , ',') train_type ,
+                   tr.model_id
+            from meta.mm_model_train tr
+            where 1=1
+            <if test="model !=null and model.trainType != null and model.trainType !=''">
+                and tr.train_type = #{model.trainType}
+            </if>
+            <if test="model !=null and model.trainMethod != null and model.trainMethod !=''">
+                and tr.train_method = #{model.trainMethod}
+            </if>
+            group by tr.model_id
+        ) b  on a.id = b.model_id
+        <where>
+            <if test="model !=null and model.id != null and model.id !=''">
+                and a.id = #{model.id}
+            </if>
+            <if test="model !=null and model.name != null and model.name !=''">
+                and upper(a.name) like concat('%', upper(#{model.name}), '%')
+            </if>
+            <if test="model !=null and model.belong != null and model.belong !=''">
+                and a.belong = #{model.belong}
+            </if>
+            <if test="model !=null and model.optimizable != null and model.optimizable !=''">
+                and a.optimizable = #{model.optimizable}
+            </if>
+            <if test="model !=null and model.trainable != null and model.trainable !=''">
+                and a.trainable = #{model.trainable}
+            </if>
+            <if test="model !=null and model.trainType != null and model.trainType !=''">
+                and exists (select 1 from meta.mm_model_train tr where a.id = tr.model_id and tr.train_type = #{model.trainType})
+            </if>
+            <if test="model !=null and model.trainMethod != null and model.trainMethod !=''">
+                and exists (select 1 from meta.mm_model_train tr where a.id = tr.model_id and tr.train_method = #{model.trainMethod})
+            </if>
+            <if test="model !=null and model.experience != null and model.experience !=''">
+                and a.experience = #{model.experience}
+            </if>
+            <if test="model !=null and model.reasonable != null and model.reasonable !=''">
+                and a.reasonable = #{model.reasonable}
+            </if>
+            <if test="model !=null and model.deployable != null and model.deployable !=''">
+                and a.deployable = #{model.deployable}
+            </if>
+            <if test="model !=null and model.publishable != null and model.publishable !=''">
+                and a.publishable = #{model.publishable}
+            </if>
+            <if test="model !=null and model.currentUserId != null">
+                and exists (
+                    select 1 from meta.mm_user_model x
+                    where x.model_id = a.id
+                    and x.user_id = #{model.currentUserId}
+                    <if test="model !=null and model.enableUsage != null and model.enableUsage !=''">
+                        and x.usage = #{model.enableUsage}
+                    </if>
+                )
+            </if>
+        </where>
+    </select>
+    <select id="queryById" resultType="com.ctdi.cnos.llm.beans.meta.model.ModelVO">
+        select a.*
+        from meta.mm_model a
+        where a.id = #{id}
+    </select>
+
+</mapper>

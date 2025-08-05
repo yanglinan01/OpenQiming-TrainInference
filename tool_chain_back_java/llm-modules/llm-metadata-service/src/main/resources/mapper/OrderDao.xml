@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.OrderDao">
+
+    <update id="updateByOrderId" parameterType="com.ctdi.cnos.llm.beans.meta.order.Order">
+        <!--@mbg.generated-->
+        update meta.mm_order
+        <set>
+            <if test="orderTitle != null and orderTitle != ''">
+                order_title = #{orderTitle},
+            </if>
+            <if test="timestamp != null and timestamp != ''">
+                timestamp = #{timestamp},
+            </if>
+            <if test="createOperName != null and createOperName != ''">
+                create_oper_name = #{createOperName},
+            </if>
+            <if test="createOperPhone != null and createOperPhone != ''">
+                create_oper_phone = #{createOperPhone},
+            </if>
+            <if test="referenceSystem != null and referenceSystem != ''">
+                reference_system = #{referenceSystem},
+            </if>
+            <if test="isRequirement != null and isRequirement != ''">
+                is_requirement = #{isRequirement},
+            </if>
+            <if test="requirementNumber != null and requirementNumber != ''">
+                requirement_number = #{requirementNumber},
+            </if>
+            <if test="degreeUrgency != null and degreeUrgency != ''">
+                degree_urgency = #{degreeUrgency},
+            </if>
+            <if test="degreeUrgency != null and degreeUrgency != ''">
+                degree_urgency = #{degreeUrgency},
+            </if>
+            <if test="requestingArea != null and requestingArea != ''">
+                requesting_area = #{requestingArea},
+            </if>
+            <if test="requestingDepartment != null and requestingDepartment != ''">
+                requesting_department = #{requestingDepartment},
+            </if>
+            <if test="demandContact != null and demandContact != ''">
+                demand_contact = #{demandContact},
+            </if>
+            <if test="demandContactPhone != null and demandContactPhone != ''">
+                demand_contact_phone = #{demandContactPhone},
+            </if>
+            <if test="coverPeople != null and coverPeople != ''">
+                cover_people = #{coverPeople},
+            </if>
+            <if test="expectedTransferVolume != null and expectedTransferVolume != ''">
+                expected_transfer_volume = #{expectedTransferVolume},
+            </if>
+            <if test="requirementsOverview != null and requirementsOverview != ''">
+                requirements_overview = #{requirementsOverview},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate},
+            </if>
+            <if test="modifierId != null and modifierId != ''">
+                modifier_id = #{modifierId},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="reviewStatus != null and reviewStatus != ''">
+                review_status = #{reviewStatus},
+            </if>
+            <if test="reviewTime != null">
+                review_time = #{review_time},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

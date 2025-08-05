@@ -1,0 +1,129 @@
+{
+  "outputFiles": [
+    {
+      "fileType": "Entity",
+      "outputLocation": "com.ctdi.cnos.llm.beans",
+      "templateName": "entity.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\entity.java.btl",
+      "builtIn": true,
+      "outputPackage": "com.ctdi.cnos.llm.beans"
+    },
+    {
+      "fileType": "Mapper.xml",
+      "outputLocation": "java:com.ctdi.cnos.llm.dao",
+      "templateName": "mapper.xml.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\mapper.xml.btl",
+      "builtIn": true,
+      "outputPackage": "com.ctdi.cnos.llm.dao"
+    },
+    {
+      "fileType": "Mapper.java",
+      "outputLocation": "java:com.ctdi.cnos.llm.dao",
+      "templateName": "mapper.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\mapper.java.btl",
+      "builtIn": true,
+      "outputPackage": "com.ctdi.cnos.llm.dao"
+    },
+    {
+      "fileType": "Service",
+      "outputLocation": "com.ctdi.cnos.llm.service",
+      "templateName": "service.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\service.java.btl",
+      "builtIn": true,
+      "outputPackage": "com.ctdi.cnos.llm.service"
+    },
+    {
+      "fileType": "ServiceImpl",
+      "outputLocation": "com.ctdi.cnos.llm.service.impl",
+      "templateName": "serviceImpl.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\serviceImpl.java.btl",
+      "builtIn": true,
+      "outputPackage": "com.ctdi.cnos.llm.service.impl"
+    },
+    {
+      "fileType": "Controller",
+      "outputLocation": "com.ctdi.cnos.llm.controller",
+      "templateName": "controller.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\controller.java.btl",
+      "builtIn": true,
+      "outputPackage": "com.ctdi.cnos.llm.controller"
+    },
+    {
+      "fileType": "DTO",
+      "outputLocation": "java:com.ctdi.cnos.llm.beans",
+      "templateName": "mydto.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\mydto.java.btl",
+      "builtIn": false,
+      "outputPackage": "com.ctdi.cnos.llm.beans"
+    },
+    {
+      "fileType": "VO",
+      "outputLocation": "java:com.ctdi.cnos.llm.beans",
+      "templateName": "myvo.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\myvo.java.btl",
+      "builtIn": false,
+      "outputPackage": "com.ctdi.cnos.llm.beans"
+    },
+    {
+      "fileType": "FeignClient",
+      "outputLocation": "java:com.ctdi.cnos.llm.feign",
+      "templateName": "feignClient.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\feignClient.java.btl",
+      "builtIn": false,
+      "outputPackage": "com.ctdi.cnos.llm.feign"
+    },
+    {
+      "fileType": "FeignController",
+      "outputLocation": "java:com.ctdi.cnos.llm.controller",
+      "templateName": "feignController.java.btl",
+      "templatePath": "classpath:com.ctdi.cnos.llm\\template\\feignController.java.btl",
+      "builtIn": false,
+      "outputPackage": "com.ctdi.cnos.llm.controller"
+    }
+  ],
+  "entityStrategy": {
+    "superEntityClass": "com.ctdi.cnos.llm.base.object.BaseModel",
+    "superEntityColumns": [
+      "creator_id",
+      "create_date",
+      "modifier_id",
+      "modify_date"
+    ],
+    "tableFills": [
+      "creator_id:insert",
+      "create_date:insert",
+      "modifier_id:insert",
+      "modify_date:insert",
+      "modifier_id:update",
+      "modify_date:update"
+    ],
+    "entitySerialVersionUID": false,
+    "entityColumnConstant": false,
+    "activeRecord": false,
+    "entityBuilderModel": false,
+    "entityLombokModel": true,
+    "entityBooleanColumnRemoveIsPrefix": false,
+    "entityTableFieldAnnotationEnable": true,
+    "versionFieldName": null,
+    "logicDeleteFieldName": null,
+    "swagger2": true
+  },
+  "mapperStrategy": {
+    "superMapperClass": "com.ctdi.cnos.llm.base.dao.BaseDaoMapper"
+  },
+  "mapperXmlStrategy": {
+    "baseResultMap": false,
+    "enableCache": false
+  },
+  "controllerStrategy": {
+    "superControllerClass": "",
+    "restControllerStyle": true,
+    "controllerMappingHyphenStyle": false
+  },
+  "serviceStrategy": {
+    "superServiceClass": "com.ctdi.cnos.llm.base.service.IBaseService"
+  },
+  "serviceImplStrategy": {
+    "superServiceImplClass": "com.ctdi.cnos.llm.base.service.BaseService"
+  }
+}

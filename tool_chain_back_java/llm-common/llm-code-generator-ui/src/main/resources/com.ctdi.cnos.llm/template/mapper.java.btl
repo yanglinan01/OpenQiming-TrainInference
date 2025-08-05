@@ -1,0 +1,25 @@
+package ${package.Mapper};
+
+import ${superMapperClassPackage};
+import org.apache.ibatis.annotations.Mapper;
+<% if(mapperAnnotationClass!=null){ %>
+import ${mapperAnnotationClass.name};
+<% } %>
+
+/**
+ * ${table.comment!} 数据操作访问接口。
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(mapperAnnotationClass!=null){ %>
+@${mapperAnnotationClass.simpleName}
+<% } %>
+<% if(kotlin){ %>
+interface ${table.mapperName} : ${superMapperClass}<${entity}>
+<% }else{ %>
+@Mapper
+public interface ${table.mapperName} extends ${superMapperClass}<${entity}> {
+
+}
+<% } %>

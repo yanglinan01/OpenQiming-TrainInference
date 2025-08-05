@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.log.dao.MmModelMonitorStatisticsDao">
+    <resultMap id="BaseResultMap" type="com.ctdi.cnos.llm.beans.log.MmModelMonitorStatistics">
+        <id column="id" jdbcType="NUMERIC" property="id" />
+        <result column="token_total" jdbcType="NUMERIC" property="tokenTotal" />
+        <result column="token_input" jdbcType="NUMERIC" property="tokenInput" />
+        <result column="token_output" jdbcType="NUMERIC" property="tokenOutput" />
+        <result column="intf_total" jdbcType="NUMERIC" property="intfTotal" />
+    </resultMap>
+
+    <select id="selectData" resultMap="BaseResultMap">
+        select * from log.mm_model_monitor_statistics where task_id = #{taskId} limit 1
+    </select>
+
+    <select id="queryLastStatistics" resultMap="BaseResultMap">
+        select sum(token_total) as token_total, sum(token_input) as token_input, sum(token_output) as token_output,sum(intf_total) as intf_total from log.mm_model_monitor_statistics
+         where task_id in
+         <foreach item="taskIds" collection="taskIds" open="(" separator="," close=")">
+            #{taskIds}
+         </foreach>
+    </select>
+
+    <select id="queryModelRequest" resultType="com.ctdi.cnos.llm.beans.log.model.rsp.MmModelMonitorModelVO">
+        select
+            <choose>
+                <when test="modelCallType == 0">
+                    sum(model_output_token + model_input_token) as totalToken
+                </when>
+                <when test="modelCallType == 1">
+                    sum(model_input_token) as totalToken
+                </when>
+                <when test="modelCallType == 2">
+                    sum(model_output_token) as totalToken
+                </when>
+                <otherwise>
+                    sum(model_output_token + model_input_token) as totalToken
+                </otherwise>
+            </choose>,
+            date_trunc('hour', model_call_date) AS modelCallDate
+        from log.mm_model_monitor_model
+        where
+            <if test="taskId != 0">
+            task_id = #{taskId}
+            </if>
+        <if test="taskId == 0">
+            1 = 1
+        </if>
+        and model_call_date between TO_TIMESTAMP(#{begin}, 'YYYY-MM-DD HH24:MI:SS') and TO_TIMESTAMP(#{end}, 'YYYY-MM-DD HH24:MI:SS')
+        GROUP BY
+        date_trunc('hour', model_call_date)
+        ORDER BY
+            modelCallDate;
+    </select>
+    <select id="queryIntfRequest" resultType="com.ctdi.cnos.llm.beans.log.model.rsp.MmModelMonitorModelVO">
+        select sum(intf_call_counts) as totalToken,
+        date_trunc('hour', intf_call_date) AS modelCallDate
+        from log.mm_model_monitor_intf
+        where
+        <if test="intfCallType == 2">
+            1=1
+        </if>
+        <if test="intfCallType != 2">
+            intf_call_type = #{intfCallType}
+        </if>
+        <if test="taskId != 0">
+            and task_id = #{taskId}
+        </if>
+        and intf_call_date between TO_TIMESTAMP(#{begin}, 'YYYY-MM-DD HH24:MI:SS') and TO_TIMESTAMP(#{end}, 'YYYY-MM-DD HH24:MI:SS')
+        GROUP BY
+        date_trunc('hour', intf_call_date)
+        ORDER BY
+        modelCallDate;
+    </select>
+    <update id="updateCounts">
+        update  log.mm_model_monitor_statistics
+        set token_total = token_total + #{inputToken} + #{outputToken},
+            token_input = token_input + #{inputToken},
+            token_output = token_output + #{outputToken},
+            intf_total = intf_total + 1
+        where task_id = #{taskId}
+    </update>
+</mapper>

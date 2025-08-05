@@ -1,0 +1,90 @@
+package ${feignClientConfig.packageName};
+
+import com.ctdi.cnos.llm.RemoteConstont;
+import com.ctdi.cnos.llm.base.object.PageResult;
+import com.ctdi.cnos.llm.base.object.QueryParam;
+import com.ctdi.cnos.llm.response.OperateResult;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+/**
+ * ${table.comment!}服务远程数据操作访问接口。
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Component
+@FeignClient(value = RemoteConstont.${feignClientConfig.feignClientRef}_SERVICE_NAME, path = RemoteConstont.${feignClientConfig.feignClientRef}_SERVICE_PATH)
+public interface ${feignClientConfig.className} {
+
+	<% if(isNotEmpty(controllerMethods.list)){  %>
+    /**
+     * 分页查询符合条件的${table.comment!}列表。
+     *
+     * @param queryParam 查询对象。
+     * @return 分页列表数据。
+     */
+    @PostMapping(value = "/${entityInstanceName}/queryPage")
+    OperateResult<PageResult<${voConfig.className}>> queryPage(@RequestBody QueryParam queryParam);
+
+    /**
+     * 查询符合条件的${table.comment!}列表。
+     *
+     * @param queryParam 查询对象。
+     * @return 列表数据。
+     */
+    @PostMapping(value = "/${entityInstanceName}/queryList")
+    OperateResult<List<${voConfig.className}>> queryList(@RequestBody QueryParam queryParam);
+	<% } %>
+
+	<% if(isNotEmpty(controllerMethods.getById)){ %>
+    /**
+     * 查询指定${table.comment!}数据。
+     *
+     * @param id 指定${table.comment!}主键Id。
+     * @return 单条数据。
+     */
+	@GetMapping(value = "/${entityInstanceName}/queryById")
+    OperateResult<${voConfig.className}> queryById(@RequestParam("id") Long id);
+	<% } %>
+
+	<% if(isNotEmpty(controllerMethods.create)){ %>
+    /**
+     * 添加${table.comment!}操作。
+     *
+     * @param ${entityInstanceName}DTO 添加${table.comment!}对象。
+     * @return 应答结果对象。
+     */
+    @PostMapping(value = "/${entityInstanceName}/add")
+    OperateResult<String> add(@RequestBody ${dtoConfig.className} ${entityInstanceName}DTO);
+	<% } %>
+	
+	<% if(isNotEmpty(controllerMethods.update)){ %>
+    /**
+     * 更新${table.comment!}操作。
+     *
+     * @param ${entityInstanceName}DTO 更新${table.comment!}对象。
+     * @return 应答结果对象。
+     */
+    @PostMapping(value = "/${entityInstanceName}/updateById")
+    OperateResult<String> updateById(@RequestBody ${dtoConfig.className} ${entityInstanceName}DTO);
+	<% } %>
+
+	<% if(isNotEmpty(controllerMethods.delete)){ %>
+    /**
+     * 删除指定的${table.comment!}。
+     *
+     * @param id 指定${table.comment!}主键Id。
+     * @return 应答结果对象。
+     */
+    @GetMapping(value = "/${entityInstanceName}/deleteById")
+    OperateResult<String> deleteById(@RequestParam("id") Long id);
+	<% } %>
+
+}

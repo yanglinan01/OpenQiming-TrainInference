@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.log.dao.SessionCacheDao">
+    <!-- Result Map -->
+    <resultMap id="SessionResult" type="com.ctdi.cnos.llm.beans.log.sessioncache.SessionCacheEntity">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="sessionId" column="session_id" jdbcType="VARCHAR"/>
+        <result property="intention" column="intention" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="sessionNum" column="session_num" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 查询会话 -->
+    <select id="getSession" resultMap="SessionResult">
+        SELECT id, session_id, intention,province, session_num, update_time
+        FROM log.session_cache
+        WHERE session_id = #{sessionId, jdbcType=VARCHAR}
+        AND intention = #{intention, jdbcType=VARCHAR}
+        AND province = #{province, jdbcType=VARCHAR}
+    </select>
+
+    <!-- 插入或更新会话 -->
+    <insert id="createOrUpdateSession" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO log.session_cache (
+        id,session_id, intention, province,session_num, update_time
+        )
+        VALUES (
+        #{id,jdbcType=VARCHAR},
+        #{sessionId, jdbcType=VARCHAR},
+        #{intention, jdbcType=VARCHAR},
+        #{province, jdbcType=VARCHAR},
+        #{sessionNum, jdbcType=INTEGER},
+        NOW()
+        )
+        ON CONFLICT  (session_id, intention,province)
+        DO UPDATE SET
+            session_num = log.session_cache.session_num + 1,
+            update_time = NOW();
+    </insert>
+
+    <!-- 删除会话 -->
+    <delete id="deleteSession">
+        DELETE FROM log.session_cache
+        WHERE session_id = #{sessionId, jdbcType=VARCHAR}
+        AND intention = #{intention, jdbcType=VARCHAR}
+        AND province = #{province, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="cleanHistoryData">
+        DELETE FROM log.session_cache
+        WHERE update_time  &lt;  CURRENT_DATE  - INTERVAL '3 DAY'
+    </delete>
+</mapper>

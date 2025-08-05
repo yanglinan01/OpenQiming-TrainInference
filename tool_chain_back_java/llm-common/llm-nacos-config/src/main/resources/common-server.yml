@@ -1,0 +1,40 @@
+cnos:
+  server:
+    llm-web:
+      port: 8801
+      contextPath: /llm-web
+    llm-reason-service:
+      port: 8802
+      contextPath: /reason-service
+    llm-train-service:
+      port: 8803
+      contextPath: /train-service
+    llm-log-service:
+      port: 8804
+      contextPath: /log-service
+    llm-metadata-service:
+      port: 8805
+      contextPath: /metadata-service
+    llm-register-service:
+      port: 8806
+      contextPath: /register-service
+    llm-intf-restful-service:
+      port: 8807
+      contextPath: /intf-restful-service
+    llm-intf-ws-service:
+      port: 8808
+      contextPath: /intf-ws-service
+    llm-api-service:
+      port: 8810
+      contextPath: /api-service
+    llm-job-service:
+      port: 8811
+      contextPath: /job-service
+
+server:
+  #端口，默认8080 容器化部署时采用默认端口
+  port: ${cnos.server.${spring.application.name}.port:8080}
+  servlet:
+    #上下文，默认为sprng.application.name
+    contextPath: ${cnos.server.${spring.application.name}.contextPath:/${spring.application.name}}
+

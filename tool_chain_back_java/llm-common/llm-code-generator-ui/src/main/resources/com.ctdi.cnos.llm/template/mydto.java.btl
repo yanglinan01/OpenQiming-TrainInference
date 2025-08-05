@@ -1,0 +1,50 @@
+package ${package.Entity};
+
+import com.ctdi.cnos.llm.base.object.Groups;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+/**
+ * ${table.comment!} DTO对象。
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@ApiModel(description = "${dtoConfig.className}对象")
+@Data
+<% if(isNotEmpty(dtoConfig.superClass)){ %>
+public class ${dtoConfig.className} extends ${dtoConfig.superClass} {
+<% }else if(entitySerialVersionUID){ %>
+public class ${dtoConfig.className} implements Serializable {
+<% }else{ %>
+public class ${dtoConfig.className} {
+<% } %>
+
+<% for(field in table.fields){ %>
+	<% if(isNotEmpty(field.comment)){ %>
+    /**
+     * ${field.comment}
+     */
+		<% if(field.metaInfo.nullable){ %>
+    @ApiModelProperty(value = "${field.comment}")
+		<% } else { %>
+	@ApiModelProperty(value = "${field.comment}", required = true)
+				<% if(field.propertyType=='String'){ %>
+	@NotBlank(message = "数据验证失败，${field.comment}不能为空！")			
+				<% }else if(field.propertyType=='Long'){ %>
+						<% if(field.keyFlag){ %>
+	@NotNull(message = "数据验证失败，${field.comment}不能为空！", groups = {Groups.UPDATE.class})
+						<% } else{ %>
+	@NotNull(message = "数据验证失败，${field.comment}不能为空！")
+						<% } %>
+				<% } %>
+		<% } %>
+	<% } %>
+	private ${field.propertyType} ${field.propertyName};
+	
+<% } %>
+}

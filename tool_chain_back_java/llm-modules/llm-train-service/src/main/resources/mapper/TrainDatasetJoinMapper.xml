@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.train.dao.TrainDatasetJoinDao">
+    <sql id="DataSet_Column_List">
+        mds.id as id,
+        mds.data_set_name as dataSetName,
+        mds.data_set_version as dataSetVersion,
+        mds.data_type as dataType,
+        mds.pr_count as prCount,
+        mds.set_type as setType,
+        mds.template_type as templateType,
+        mds.description as description,
+        mds.call_count as callCount,
+        mds.save_type as saveType,
+        mds.creator_id as creatorId,
+        mds.modify_date,
+        mds.create_date,
+        mds.request_id as requestId,
+        mds.file_size as fileSize,
+        mds.region_code as regionCode,
+        mds.type as "type",
+        mds.enhanced_train_task_id as enhancedTrainTaskId,
+        mds.project_id as projectId,
+        mds.belong as belong
+    </sql>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into train.mm_train_dataset_join (
+        id,
+        task_id,
+        data_set_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.taskId},
+            #{item.dataSetId}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getDataSetByTaskId" resultType="com.ctdi.cnos.llm.beans.meta.dataSet.DataSet">
+        select
+        <include refid="DataSet_Column_List"/>
+        from train.mm_train_dataset_join mtdj
+        left join meta.mm_data_set mds on mtdj.data_set_id=mds.id
+        where mtdj.task_id = #{taskId}
+        order by mds.modify_date desc
+    </select>
+
+</mapper>

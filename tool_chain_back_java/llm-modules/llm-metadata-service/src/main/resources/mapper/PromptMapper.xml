@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PromptDao">
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.prompt.PromptVO">
+        select a.*
+        from meta.mm_prompts a
+        <where>
+            <if test="prompt !=null and prompt.id != null and prompt.id !=''">
+                and a.id = #{prompt.id}
+            </if>
+            <if test="prompt !=null and prompt.name != null and prompt.name !=''">
+                and upper(a.name) like concat('%', upper(#{prompt.name}), '%')
+            </if>
+            <if test="prompt !=null and prompt.type != null and prompt.type !=''">
+                and a.type = #{prompt.type}
+            </if>
+            <if test="prompt !=null and prompt.types != null and prompt.types !=''">
+                and a.type = any(string_to_array(#{prompt.types}, ','))
+            </if>
+            <if test="prompt !=null and prompt.belong != null and prompt.belong !=''">
+                and a.belong = #{prompt.belong}
+            </if>
+            <if test="prompt !=null and prompt.identifier != null and prompt.identifier !=''">
+                and a.identifier = #{prompt.identifier}
+            </if>
+            <if test="prompt !=null and prompt.promptText != null and prompt.promptText !=''">
+                and upper(a.prompt_text) like concat('%', upper(#{prompt.promptText}), '%')
+            </if>
+            <if test="prompt !=null and prompt.modelId != null and prompt.modelId !=''">
+                and a.model_id = #{modelId}
+            </if>
+            <if test="prompt !=null and prompt.dataScopeSql != null and prompt.dataScopeSql !=''">
+                ${prompt.dataScopeSql}
+            </if>
+            <if test="prompt !=null and prompt.createDate != null and prompt.createDate !=''">
+                and a.create_date = #{prompt.createDate}
+            </if>
+            <if test="prompt !=null and prompt.modifierId != null">
+                and a.modifier_id = #{prompt.modifierId}
+            </if>
+            <if test="prompt !=null and prompt.modifyDate != null and prompt.modifyDate !=''">
+                and a.modify_date = #{prompt.modifyDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryById" parameterType="Long" resultType="com.ctdi.cnos.llm.beans.meta.prompt.PromptVO">
+        select a.*
+        from meta.mm_prompts a
+        where a.id = #{id}
+    </select>
+
+    <select id="getPromptCount" resultType="Long">
+        select count(1) from meta.mm_prompts a
+        where a.belong = '1'
+        or ( a.belong = '2'
+        <if test="dataScopeSql != null and dataScopeSql !=''">
+            ${dataScopeSql}
+        </if>
+        )
+    </select>
+
+</mapper>

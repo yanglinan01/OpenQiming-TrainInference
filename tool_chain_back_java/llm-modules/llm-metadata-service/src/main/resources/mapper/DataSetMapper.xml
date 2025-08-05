@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.DataSetDao">
+
+    <sql id="DataSetVO_Column_List">
+        mds.id as id,
+        mds.data_set_name as dataSetName,
+        mds.request_id as requestId,
+        mds.data_set_version as dataSetVersion,
+        mds.data_type as dataType,
+        mds.save_path as savePath,
+        mds.pr_count as prCount,
+        mds.set_type as setType,
+        mds.template_type as templateType,
+        mds.description as description,
+        mds.call_count as callCount,
+        mds.creator_id as creatorId,
+        mds.modify_date as modifyDate,
+        mds.create_date as createDate,
+        mds.type as "type",
+        mds.belong as belong,
+        mds.file_size as fileSize,
+        mds.region_code as regionCode,
+        mds.enhanced_train_task_id as enhancedTrainTaskId,
+        mds.project_id as projectId,
+        mpr.context as context
+    </sql>
+
+    <sql id="DataSet_Column_List">
+        mds.id as id,
+        mds.data_set_name as dataSetName,
+        mds.data_set_version as dataSetVersion,
+        mds.data_type as dataType,
+        mds.pr_count as prCount,
+        mds.set_type as setType,
+        mds.template_type as templateType,
+        mds.description as description,
+        mds.call_count as callCount,
+        mds.save_type as saveType,
+        mds.save_path as savePath,
+        mds.creator_id as creatorId,
+        mds.modify_date,
+        mds.create_date,
+        mds.request_id as requestId,
+        mds.file_size as fileSize,
+        mds.region_code as regionCode,
+        mds.type as "type",
+        mds.enhanced_train_task_id as enhancedTrainTaskId,
+        mds.project_id as projectId,
+        mds.belong as belong
+    </sql>
+
+    <!--<delete id="deleteById">
+        delete from meta.mm_data_set where id = #{dataSetId} and creator_id = #{creatorId}
+    </delete>-->
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.dataSet.DataSet">
+        select
+        <include refid="DataSet_Column_List"/>
+        from meta.mm_data_set mds
+        <where>
+            <if test="dataSet !=null and dataSet.dataScopeSql != null and dataSet.dataScopeSql !=''">
+                ${dataSet.dataScopeSql}
+            </if>
+            <if test="dataSet !=null and dataSet.projectId != null and dataSet.projectId !=''">
+                and mds.project_id = #{dataSet.projectId}
+            </if>
+            <if test="dataSet !=null and dataSet.projectId == null">
+                and mds.project_id is null
+            </if>
+            <if test="dataSet !=null and dataSet.dataSetName != null and dataSet.dataSetName !=''">
+                and mds.data_set_name like concat('%', #{dataSet.dataSetName}, '%')
+            </if>
+            <if test="dataSet !=null and dataSet.types != null and dataSet.types !=''">
+                and mds.type = any(string_to_array(#{dataSet.types}, ','))
+            </if>
+            <if test="dataSet !=null and dataSet.belong != null and dataSet.belong !=''">
+                and mds.belong = #{dataSet.belong}
+            </if>
+            <if test="dataSet !=null and dataSet.dataType != null and dataSet.dataType !=''">
+                and mds.data_type = #{dataSet.dataType}
+            </if>
+            <if test="dataSet !=null and dataSet.dataTypes != null and dataSet.dataTypes.size() > 0">
+                and mds.data_type in
+                <foreach collection="dataSet.dataTypes" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="dataSet !=null and dataSet.setType != null and dataSet.setType !=''">
+                and mds.set_type = #{dataSet.setType}
+            </if>
+            <if test="dataSet !=null and dataSet.requestId != null and dataSet.requestId !=''">
+                and mds.request_id = #{dataSet.requestId}
+            </if>
+            <if test="dataSet !=null and dataSet.enhancedTrainTaskId != null and dataSet.enhancedTrainTaskId !=''">
+                and mds.enhanced_train_task_id = #{dataSet.enhancedTrainTaskId}
+            </if>
+            <if test="dataSet !=null and dataSet.ids != null and dataSet.ids.size() > 0">
+                and mds.id in
+                <foreach collection="dataSet.ids" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+
+        </where>
+        order by mds.modify_date desc
+    </select>
+
+    <update id="callIncr">
+        update meta.mm_data_set
+        set call_count = call_count + 1,
+            modify_date = now()
+        where id = #{dataSetId}
+    </update>
+
+    <select id="queryById" resultType="com.ctdi.cnos.llm.beans.meta.dataSet.DataSetAndPrInfoVO">
+        select
+        <include refid="DataSetVO_Column_List"/>
+        from meta.mm_data_set mds
+        left join meta.mm_prompt_resp mpr
+        on mds.id = mpr.data_set_id
+        where mds.id = #{id}
+    </select>
+    <select id="queryTestById" resultType="com.ctdi.cnos.llm.beans.meta.dataSet.DataSetAndPrInfoVO">
+        select mds.*, mdsf.id as dataSetFileId
+        from meta.mm_data_set mds
+        inner join meta.mm_data_set_file mdsf on mds.save_path = mdsf.save_path
+        where mds.id = #{id};
+    </select>
+
+</mapper>
+

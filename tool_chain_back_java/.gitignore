@@ -1,0 +1,14 @@
+*.iml
+.svn
+.idea
+.DS_Store
+.classpath
+.project
+*.jar
+*.tar.gz
+node_modules/
+target/
+logs/
+http/
+tmp/
+storage/

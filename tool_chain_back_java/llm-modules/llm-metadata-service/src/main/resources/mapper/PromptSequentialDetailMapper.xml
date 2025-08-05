@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PromptSequentialDetailDao">
+
+    <resultMap type="com.ctdi.cnos.llm.beans.meta.prompt.PromptSequentialDetail" id="PromptSequentialDetailMap">
+        <result property="id" column="id" jdbcType="NUMERIC"/>
+        <result property="dataSetFileId" column="data_set_file_id" jdbcType="VARCHAR"/>
+        <result property="circuitId" column="circuit_id" jdbcType="VARCHAR"/>
+        <result property="cirName" column="cir_name" jdbcType="VARCHAR"/>
+        <result property="kDevId" column="k_dev_id" jdbcType="VARCHAR"/>
+        <result property="kIntfId" column="k_intf_id" jdbcType="VARCHAR"/>
+        <result property="devidIp" column="devid_ip" jdbcType="VARCHAR"/>
+        <result property="bDevId" column="b_dev_id" jdbcType="VARCHAR"/>
+        <result property="bIntfDescr" column="b_intf_descr" jdbcType="VARCHAR"/>
+        <result property="bDevidIp" column="b_devid_ip" jdbcType="VARCHAR"/>
+        <result property="dCirbw" column="d_cirbw" jdbcType="VARCHAR"/>
+        <result property="dInFlux" column="d_in_flux" jdbcType="VARCHAR"/>
+        <result property="dOutFlux" column="d_out_flux" jdbcType="VARCHAR"/>
+        <result property="dInFluxRatio" column="d_in_flux_ratio" jdbcType="VARCHAR"/>
+        <result property="dOutFluxRatio" column="d_out_flux_ratio" jdbcType="VARCHAR"/>
+        <result property="tCtime" column="t_ctime" jdbcType="TIMESTAMP"/>
+        <result property="param0" column="param0" jdbcType="VARCHAR"/>
+        <result property="param1" column="param1" jdbcType="VARCHAR"/>
+        <result property="param2" column="param2" jdbcType="VARCHAR"/>
+        <result property="param3" column="param3" jdbcType="VARCHAR"/>
+        <result property="param4" column="param4" jdbcType="VARCHAR"/>
+        <result property="param5" column="param5" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="creatorId" column="creator_id" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="modifierId" column="modifier_id" jdbcType="VARCHAR"/>
+        <result property="modifyDate" column="modify_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into meta.mm_prompt_sequential_detail (id,data_set_file_id,circuit_id,cir_name,k_dev_id,k_intf_id,devid_ip,
+        b_dev_id,b_intf_descr,b_devid_ip,d_cirbw,d_in_flux,d_out_flux,d_in_flux_ratio,d_out_flux_ratio,t_ctime,status,
+        param0,param1,param2,param3,param4,param5,creator_id,create_date,modifier_id,modify_date)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.dataSetFileId},#{item.circuitId},#{item.cirName},#{item.kDevId},#{item.kIntfId},#{item.devidIp},#{item.bDevId},#{item.bIntfDescr},#{item.bDevidIp},#{item.dCirbw},#{item.dInFlux},#{item.dOutFlux},#{item.dInFluxRatio},
+            #{item.dOutFluxRatio},#{item.tCtime},#{item.status},#{item.param0},#{item.param1},#{item.param2},#{item.param3},#{item.param4},#{item.param5},
+            #{item.creatorId},#{item.createDate},#{item.modifierId},#{item.modifyDate}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByDataSetFileId">
+        delete from meta.mm_prompt_sequential_detail where data_set_file_id = #{dataSetFileId}
+    </delete>
+
+</mapper>
+

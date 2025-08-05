@@ -1,0 +1,7 @@
+spring:
+   application:
+      name: llm-log-service
+user:
+   data-permission:
+      enable: false
+      override: false

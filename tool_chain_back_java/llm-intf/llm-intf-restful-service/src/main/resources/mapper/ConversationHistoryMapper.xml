@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.history.dao.ConversationHistoryDao">
+
+    <sql id="select_columns">
+        a.id as id,
+        a.user_id as userId,
+        a.session_id as sessionId,
+        a.question as question,
+        a.answer as answer,
+        a.intent as intent,
+        a.user_state as userStateText,
+        a.model_state as modelState,
+        a.real_question as realQuestion,
+        a.topic_id as topicId,
+        a.time as time
+    </sql>
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.log.conversation.ConversationHistory">
+        select
+        <include refid="select_columns"/>
+        from log.conversation_history a
+        <where>
+            <if test="userId != null and userId !=''">
+                and a.user_id = #{userId}
+            </if>
+            <if test="sessionId != null and sessionId !=''">
+                and a.session_id = #{sessionId}
+            </if>
+        </where>
+        order by a.time desc
+        <if test="num != null">
+            limit #{num}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.ctdi.cnos.llm.beans.log.conversation.ConversationHistory">
+        insert into log.conversation_history (id,user_id,session_id,question,answer,intent,user_state,model_state,real_question,topic_id,time)
+        values (#{id},#{userId},#{sessionId},#{question},#{answer},#{intent},#{userStateText},#{modelState},#{realQuestion},#{topicId},now())
+    </insert>
+
+    <delete id="deleteByTime" parameterType="java.util.Date">
+        delete from log.conversation_history
+        where #{date} > time
+    </delete>
+</mapper>

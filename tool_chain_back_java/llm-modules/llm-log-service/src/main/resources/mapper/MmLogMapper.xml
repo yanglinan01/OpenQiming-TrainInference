@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.log.dao.MmLogDao">
+    <resultMap id="BaseResultMap" type="com.ctdi.cnos.llm.beans.log.MmLog">
+        <id column="id" jdbcType="NUMERIC" property="id" />
+        <result column="interface_name" jdbcType="VARCHAR" property="interfaceName" />
+        <result column="request_params" jdbcType="VARCHAR" property="requestParams" />
+        <result column="response_params" jdbcType="VARCHAR" property="responseParams" />
+        <result column="request_time" jdbcType="TIMESTAMP" property="requestTime" />
+        <result column="response_time" jdbcType="TIMESTAMP" property="responseTime" />
+        <result column="duration" jdbcType="NUMERIC" property="duration" />
+        <result column="status_code" jdbcType="VARCHAR" property="statusCode" />
+        <result column="error_message" jdbcType="VARCHAR" property="errorMessage" />
+        <result column="interface_url" jdbcType="VARCHAR" property="interfaceUrl" />
+        <result column="client_ip" jdbcType="VARCHAR" property="clientIp" />
+        <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
+        <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="modifier_id" jdbcType="VARCHAR" property="modifierId" />
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, interface_name, request_params, response_params, request_time, response_time, duration, status_code, error_message, interface_url, client_ip, server_ip,
+        creator_id, create_date, modifier_id, modify_date
+    </sql>
+    <select id="queryById" parameterType="java.math.BigDecimal" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from log.mm_log
+        where id = #{id,jdbcType=NUMERIC}
+    </select>
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.log.MmLog">
+        select
+        <include refid="Base_Column_List" />
+        from log.mm_log
+        <where>
+            <if test="mmLog !=null and mmLog.id != null and mmLog.id !=''">
+                id = #{mmLog.id,jdbcType=NUMERIC}
+            </if>
+            <if test="mmLog !=null and mmLog.interfaceName != null and mmLog.interfaceName !=''">
+                interface_name like concat('%', #{mmLog.interfaceName}, '%')
+            </if>
+            <if test="mmLog !=null and mmLog.requestParams != null and mmLog.requestParams !=''">
+                request_params = #{mmLog.requestParams,jdbcType=VARCHAR}
+            </if>
+            <if test="mmLog !=null and mmLog.responseParams != null and mmLog.responseParams !=''">
+                response_params = #{mmLog.responseParams,jdbcType=NUMERIC}
+            </if>
+            <if test="mmLog !=null and mmLog.statusCode != null and mmLog.statusCode !=''">
+                status_code = #{mmLog.statusCode,jdbcType=NUMERIC}
+            </if>
+            <if test="mmLog !=null and mmLog.clientIp != null and mmLog.clientIp !=''">
+                client_ip like concat('%', #{mmLog.clientIp}, '%')
+            </if>
+            <if test="mmLog !=null and mmLog.serverIp != null and mmLog.serverIp !=''">
+                server_ip like concat('%', #{mmLog.serverIp}, '%')
+            </if>
+        </where>
+        ORDER BY create_date asc
+<!--        <if test="page !=null">-->
+<!--            limit #{page.size} offset #{page.size} * #{page.current}-->
+<!--        </if>-->
+
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        select
+        count(1)
+        from log.mm_log
+        <where>
+            <if test="mmLog !=null and mmLog.id != null and mmLog.id !=''">
+                id = #{mmLog.id,jdbcType=NUMERIC}
+            </if>
+            <if test="mmLog !=null and mmLog.interfaceName != null and mmLog.interfaceName !=''">
+                interface_name = #{mmLog.interfaceName,jdbcType=VARCHAR}
+            </if>
+            <if test="mmLog !=null and mmLog.requestParams != null and mmLog.requestParams !=''">
+                request_params = #{mmLog.requestParams,jdbcType=VARCHAR}
+            </if>
+            <if test="mmLog !=null and mmLog.responseParams != null and mmLog.responseParams !=''">
+                response_params = #{mmLog.responseParams,jdbcType=NUMERIC}
+            </if>
+            <if test="mmLog !=null and mmLog.statusCode != null and mmLog.statusCode !=''">
+                status_code = #{mmLog.statusCode,jdbcType=NUMERIC}
+            </if>
+            <if test="mmLog !=null and mmLog.clientIp != null and mmLog.clientIp !=''">
+                client_ip = #{mmLog.clientIp,jdbcType=VARCHAR}
+            </if>
+            <if test="mmLog !=null and mmLog.serverIp != null and mmLog.serverIp !=''">
+                server_ip = #{mmLog.serverIp,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <delete id="deleteById" parameterType="java.math.BigDecimal">
+        delete from log.mm_log
+        where id = #{id,jdbcType=NUMERIC}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.ctdi.cnos.llm.beans.log.MmLog" useGeneratedKeys="true">
+        insert into log.mm_log (id, interface_name, request_params,response_params,
+        request_time, response_time,duration, status_code, error_message, interface_url, client_ip,
+        server_ip,creator_id, create_date, modifier_id, modify_date)
+        values (#{id,jdbcType=NUMERIC},#{interfaceName,jdbcType=VARCHAR},#{requestParams,jdbcType=VARCHAR},
+        #{responseParams,jdbcType=VARCHAR},#{requestTime,jdbcType=TIMESTAMP},#{responseTime,jdbcType=TIMESTAMP},
+        #{duration,jdbcType=NUMERIC},#{statusCode,jdbcType=VARCHAR},#{errorMessage,jdbcType=VARCHAR},
+        #{interfaceUrl,jdbcType=VARCHAR},#{clientIp,jdbcType=VARCHAR},#{serverIp,jdbcType=VARCHAR},#{creatorId,jdbcType=VARCHAR},
+        #{createDate,jdbcType=TIMESTAMP},#{modifierId,jdbcType=VARCHAR},#{modifyDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateById" parameterType="com.ctdi.cnos.llm.beans.log.MmLog">
+        update log.mm_log
+        <set>
+            <if test="interfaceName != null">
+                interface_name = #{interfaceName,jdbcType=VARCHAR},
+            </if>
+            <if test="requestParams != null">
+                request_params = #{requestParams,jdbcType=VARCHAR},
+            </if>
+            <if test="responseParams != null">
+                response_params = #{responseParams,jdbcType=VARCHAR},
+            </if>
+            <if test="requestTime != null">
+                request_time = #{requestTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="responseTime != null">
+                response_time = #{responseTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="duration != null">
+                duration = #{duration,jdbcType=NUMERIC},
+            </if>
+            <if test="statusCode != null">
+                status_code = #{statusCode,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMessage != null">
+                error_message = #{errorMessage,jdbcType=VARCHAR},
+            </if>
+            <if test="interfaceUrl != null">
+                interface_url = #{interfaceUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="clientIp != null">
+                client_ip = #{clientIp,jdbcType=VARCHAR},
+            </if>
+            <if test="serverIp != null">
+                server_ip = #{serverIp,jdbcType=VARCHAR},
+            </if>
+            <if test="creatorId != null">
+                creator_id = #{creatorId,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifierId != null">
+                modifier_id = #{modifierId,jdbcType=VARCHAR},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=NUMERIC}
+    </update>
+
+</mapper>

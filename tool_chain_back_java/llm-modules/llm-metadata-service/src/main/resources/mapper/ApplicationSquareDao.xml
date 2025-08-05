@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.ApplicationSquareDao">
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.application.ApplicationSquareVO">
+        select a.*
+        from meta.mm_application_square a
+        <where>
+            <if test="app !=null and app.id != null and app.id !=''">
+                and a.id = #{app.id}
+            </if>
+            <if test="app !=null and app.name != null and app.name !=''">
+                and upper(a.name) like concat('%', upper(#{app.name}), '%')
+            </if>
+            <if test="app !=null and app.type != null and app.type !=''">
+                and a.type = #{app.type}
+            </if>
+            <if test="app !=null and app.experience != null and app.experience !=''">
+                and a.experience = #{app.experience}
+            </if>
+            <if test="app !=null and app.creatorId != null">
+                and a.creator_id = #{app.creatorId}
+            </if>
+            <if test="app !=null and app.createDate != null and app.createDate !=''">
+                and a.create_date = #{app.createDate}
+            </if>
+            <if test="app !=null and app.modifierId != null">
+                and a.modifier_id = #{app.modifierId}
+            </if>
+            <if test="app !=null and app.modifyDate != null and app.modifyDate !=''">
+                and a.modify_date = #{app.modifyDate}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryById" parameterType="Long" resultType="com.ctdi.cnos.llm.beans.meta.application.ApplicationSquareVO">
+        select a.*
+        from meta.mm_application_square a
+        where a.id = #{id}
+    </select>
+
+
+</mapper>

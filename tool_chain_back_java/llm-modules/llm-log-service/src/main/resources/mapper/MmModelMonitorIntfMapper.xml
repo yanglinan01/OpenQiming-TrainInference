@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.log.dao.MmModelMonitorIntfDao">
+    <resultMap id="BaseResultMap" type="com.ctdi.cnos.llm.beans.log.MmModelMonitorIntf">
+        <id column="id" jdbcType="NUMERIC" property="id" />
+        <result column="task_id" jdbcType="NUMERIC" property="taskId" />
+        <result column="intf_call_type" jdbcType="VARCHAR" property="intfCallType" />
+        <result column="intf_call_date" jdbcType="TIMESTAMP" property="intfCallDate" />
+        <result column="intf_call_date_days" jdbcType="NUMERIC" property="intfCallDateDays" />
+        <result column="intf_call_date_hours" jdbcType="NUMERIC" property="intfCallDateHours" />
+        <result column="intf_call_counts" jdbcType="NUMERIC" property="intfCallCounts" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.log.model.rsp.MmModelMonitorModelListVO">
+        select * from log.mm_model_monitor_intf
+        where 1 = 1
+          <if test="req.startTime != null ">
+            and intf_call_date &gt;= TO_TIMESTAMP(#{req.startTime}, 'yyyy-MM-dd HH24:mi:ss')
+          </if>
+          <if test="req.endTime != null ">
+            and intf_call_date &lt;= TO_TIMESTAMP(#{req.endTime}, 'yyyy-MM-dd HH24:mi:ss')
+          </if>
+          and task_id = #{req.taskId}
+        <if test="req != null and req.intfCallType !=2">
+            and intf_call_type = #{req.intfCallType}
+        </if>
+        order by intf_call_date desc
+    </select>
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.OrderNodeDao">
+
+    <insert id="insertBatch" parameterType="list">
+        insert into meta.mm_order_node (
+        id,
+        order_code,
+        node_code,
+        node_name,
+        node_todo_staff_id,
+        node_todo_staff_name,
+        node_start_time,
+        node_status,
+        node_do_staff_id,
+        node_do_staff_name,
+        node_end_time,
+        node_opinions,
+        create_date,
+        modify_date,
+        creator_id,
+        modifier_id,
+        remark,
+        order_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.orderCode},
+            #{item.nodeCode},
+            #{item.nodeName},
+            #{item.nodeTodoStaffId},
+            #{item.nodeTodoStaffName},
+            #{item.nodeStartTime},
+            #{item.nodeStatus},
+            #{item.nodeDoStaffId},
+            #{item.nodeDoStaffName},
+            #{item.nodeEndTime},
+            #{item.nodeOpinions},
+            #{item.createDate},
+            #{item.modifyDate},
+            #{item.creatorId},
+            #{item.modifierId},
+            #{item.remark},
+            #{item.orderId}
+            )
+        </foreach>
+    </insert>
+</mapper>

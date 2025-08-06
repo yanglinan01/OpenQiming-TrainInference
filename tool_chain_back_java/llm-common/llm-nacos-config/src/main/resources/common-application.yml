@@ -1,0 +1,5 @@
+#存放通用的配置
+system:
+  domain: 64
+  seqSql: select nextval('seq_private')
+  gidType: 01

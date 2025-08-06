@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PrTestSetEvaluationDetailDao">
+
+
+    <select id="isComplete" resultType="java.lang.Boolean">
+		SELECT
+			CASE
+			WHEN COUNT(A.ID) > 0 AND COUNT(A.ID) = COUNT(b.evaluation_detail_id) THEN TRUE
+			ELSE FALSE
+		END AS is_complete
+		FROM
+			"meta"."mm_pr_test_set_evaluation_detail" A
+			LEFT JOIN "meta"."mm_pr_test_set_evaluation_score" b ON A.ID = b.evaluation_detail_id
+		WHERE
+			A.test_set_evaluation_id = #{testSetEvaluationId}
+    </select>
+</mapper>

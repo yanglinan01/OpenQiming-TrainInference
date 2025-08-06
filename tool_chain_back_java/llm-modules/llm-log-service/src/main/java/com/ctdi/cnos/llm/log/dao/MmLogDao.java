@@ -1,0 +1,68 @@
+package com.ctdi.cnos.llm.log.dao;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ctdi.cnos.llm.beans.log.MmLog;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+/**
+ * @author yuyong
+ * @date 2024/4/3 17:12
+ */
+@Mapper
+public interface MmLogDao {
+
+    /**
+     * 删除日志记录信息
+     * @param id
+     * @return
+     */
+    int deleteById(BigDecimal id);
+
+    /**
+     * 新增日志记录信息
+     * @param mmLog
+     * @return
+     */
+    int insert(MmLog mmLog);
+
+    /**
+     * 根据id获取日志记录信息
+     * @param id
+     * @return
+     */
+    MmLog queryById(BigDecimal id);
+
+    /**
+     * 修改日志记录信息
+     * @param mmLog
+     * @return
+     */
+    int updateById(MmLog mmLog);
+
+    /**
+     * 查询日志记录信息
+     * @param mmLog
+     * @return
+     */
+    List<MmLog> queryList (@Param("mmLog")MmLog mmLog);
+
+    /**
+     * 查询日志记录数量
+     * @param mmLog
+     * @return
+     */
+    int count(@Param("mmLog")MmLog mmLog);
+
+    /**
+     * 分页查询日志记录信息
+     * @param page
+     * @param mmLog
+     * @return
+     */
+    List<MmLog> queryList (@Param("page")Page<MmLog> page, @Param("mmLog")MmLog mmLog);
+
+}

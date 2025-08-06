@@ -1,0 +1,118 @@
+package ${feignControllerConfig.packageName};
+
+import com.ctdi.cnos.llm.base.object.Groups;
+import com.ctdi.cnos.llm.base.object.PageResult;
+import com.ctdi.cnos.llm.base.object.QueryParam;
+import com.ctdi.cnos.llm.response.OperateResult;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+
+/**
+ * ${table.comment!}服务远程数据操作访问接口。
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@Api(tags = "${table.comment!}接口", value = "${table.controllerName}")
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/${entityInstanceName}")
+public class ${feignControllerConfig.className} {
+
+	private final ${feignClientConfig.className} serviceClient;
+
+	<% if(isNotEmpty(controllerMethods.list)){  %>
+    /**
+     * 分页查询符合条件的${table.comment!}列表。
+     *
+     * @param queryParam 查询对象。
+     * @return 分页列表数据。
+     */
+	@ApiOperation(value = "分页查询符合条件的${table.comment!}数据", notes = "分页查询符合条件的${table.comment!}数据")
+    @PostMapping(value = "/queryPage")
+    public OperateResult<PageResult<${voConfig.className}>> queryPage(@Validated(Groups.PAGE.class) @RequestBody QueryParam queryParam) {
+		return this.serviceClient.queryPage(queryParam);
+    }
+
+    /**
+     * 查询符合条件的${table.comment!}列表。
+     *
+     * @param queryParam 查询对象。
+     * @return 列表数据。
+     */
+	@ApiOperation(value = "列表查询符合条件的${table.comment!}数据", notes = "列表查询符合条件的${table.comment!}数据")
+    @PostMapping(value = "/queryList")
+    public OperateResult<List<${voConfig.className}>> queryList(@RequestBody QueryParam queryParam) {
+		return this.serviceClient.queryList(queryParam);
+    }	
+    <% } %>
+
+    <% if(isNotEmpty(controllerMethods.getById)){ %>
+    /**
+     * 查询指定${table.comment!}数据。
+     *
+     * @param id 指定${table.comment!}主键Id。
+     * @return 单条数据。
+     */
+	@ApiOperation(value = "查询指定ID的${table.comment!}数据", notes = "通过${table.comment!}ID获取具体的${table.comment!}数据")
+	@GetMapping(value = "/queryById")
+    public OperateResult<${voConfig.className}> queryById(@ApiParam(value = "${table.comment!}ID", required = true, example = "1")
+                          @NotNull(message = "${table.comment!}ID不能为空") @RequestParam("id") Long id) {
+		return this.serviceClient.queryById(id);
+    }
+    <% } %>
+
+    <% if(isNotEmpty(controllerMethods.create)){ %>
+    /**
+     * 添加${table.comment!}操作。
+     *
+     * @param ${entityInstanceName}DTO 添加${table.comment!}对象。
+     * @return 应答结果对象。
+     */
+	@ApiOperation(value = "创建${table.comment!}", notes = "根据请求体中的${table.comment!}信息创建")
+	@ApiOperationSupport(ignoreParameters = {"id"})
+    @PostMapping(value = "/add")
+    public OperateResult<String> add(@Validated(Groups.ADD.class) @RequestBody ${entity}DTO ${entityInstanceName}DTO) {
+		return this.serviceClient.add(${entityInstanceName}DTO);
+    }
+    <% } %>
+	
+    <% if(isNotEmpty(controllerMethods.update)){ %>
+    /**
+     * 更新${table.comment!}操作。
+     *
+     * @param ${entityInstanceName}DTO 更新${table.comment!}对象。
+     * @return 应答结果对象。
+     */
+	@ApiOperation(value = "更新${table.comment!}", notes = "根据ID更新指定的${table.comment!}信息")
+    @PostMapping(value = "/updateById")
+    public OperateResult<String> updateById(@Validated(Groups.UPDATE.class) @RequestBody ${entity}DTO ${entityInstanceName}DTO) {
+		return this.serviceClient.updateById(${entityInstanceName}DTO);
+    }
+    <% } %>
+
+    <% if(isNotEmpty(controllerMethods.delete)){ %>
+    /**
+     * 删除指定的${table.comment!}。
+     *
+     * @param id 指定${table.comment!}主键Id。
+     * @return 应答结果对象。
+     */
+	@ApiOperation(value = "删除${table.comment!}", notes = "根据ID删除指定的${table.comment!}")
+    @GetMapping(value = "/deleteById")
+    public OperateResult<String> delete(@ApiParam(value = "${table.comment!}ID", required = true, example = "1")
+                          @NotNull(message = "${table.comment!}ID不能为空") @RequestParam("id") Long id) {
+        return this.serviceClient.deleteById(id);
+    }
+    <% } %>
+
+}

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.ProjectUserDao">
+
+    <delete id="deleteByProjectIdAndUserId">
+        DELETE FROM meta.mm_project_user_role
+        WHERE project_id = #{projectId} AND user_id = #{userId}
+    </delete>
+
+</mapper>

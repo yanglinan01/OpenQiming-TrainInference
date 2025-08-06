@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.GroupUserDao">
+
+    <select id="queryGroupUserIds" resultType="com.ctdi.cnos.llm.beans.meta.group.GroupUserVO">
+        select
+            mgu.group_id as groupId,
+            mg."name" as groupName,
+            ARRAY_AGG(mgu.user_id) as userIdsStr
+        from
+            meta.mm_group_user mgu
+                inner join meta.mm_group mg on
+                mg.id = mgu.group_id
+        group by
+            mgu.group_id,
+            mg."name"
+    </select>
+
+</mapper>

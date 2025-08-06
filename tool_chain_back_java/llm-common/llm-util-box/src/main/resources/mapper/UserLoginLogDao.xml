@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.system.user.dao.UserLoginLogDao">
+
+	<select id="countActiveUsersForLast31Days" resultType="java.util.Map">
+		SELECT
+		TO_CHAR(login_date, 'YYYY-MM-DD') AS login_date,
+		COUNT(user_id) AS count
+		FROM
+		log.mm_user_login_log
+		WHERE
+		login_date BETWEEN #{startDate} AND #{endDate}
+		GROUP BY
+		TO_CHAR(login_date, 'YYYY-MM-DD')
+		ORDER BY
+		login_date ASC
+	</select>
+
+	<select id="countActiveUsersForLast12Months" resultType="java.util.Map">
+		SELECT
+		TO_CHAR(login_date, 'YYYY-MM') AS month,
+		COUNT(user_id) AS count
+		FROM
+		log.mm_user_login_log
+		WHERE
+		login_date BETWEEN #{startDate} AND #{endDate}
+		GROUP BY
+		TO_CHAR(login_date, 'YYYY-MM')
+		ORDER BY
+		TO_CHAR(login_date, 'YYYY-MM') ASC
+	</select>
+
+</mapper>

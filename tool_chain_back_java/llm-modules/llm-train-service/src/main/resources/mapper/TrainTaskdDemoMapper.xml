@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.train.dao.TrainTaskDemoDao">
+
+    <sql id="select_columns">
+        a.id,
+        a.name,
+        a.model_id,
+        a.method,
+        a.data_set_id,
+        <!-- a.param,  -->
+        a.creator_id,
+        a.create_date,
+        a.modifier_id,
+        a.modify_date,
+        a.status,
+        a.region_name,
+        a.iterate_total,
+        a.iterate_curr,
+        a.runtime,
+        a.remain_time,
+        a.result,
+        a.type,
+        a.region_code,
+        <!-- a.training_loss, -->
+        a.submit_status,
+        a.train_target,
+        a.ai_cluster_id,
+        a.ai_cluster_name
+    </sql>
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.train.trainTaskDemo.TrainTaskVO">
+        select
+            <include refid="select_columns"/>,
+        <!-- a.param as paramStr, -->
+        b."name" as modelName,
+        (select u.user_name from meta.mm_user u where u.id = a.creator_id) creatorName,
+        (select count(1) from train.mm_train_task t where t.status = #{task.selectStatus} and a.status = #{task.selectStatus} and t.create_date &lt; a.create_date) waitCount
+    from train.mm_train_task_demo a
+    left join meta.mm_model b on a.model_id =b.id
+    <where>
+        <if test="task !=null and task.id != null and task.id !=''">
+            and a.id = #{task.id}
+        </if>
+        <if test="task !=null and task.name != null and task.name !=''">
+            and upper(a.name) like concat('%', upper(#{task.name}), '%')
+        </if>
+        <if test="task !=null and task.modelName != null and task.modelName !=''">
+            and upper(b.name) like concat('%', upper(#{task.modelName}), '%')
+        </if>
+        <if test="task !=null and task.modelId != null and task.modelId !=''">
+            and a.model_id = #{task.modelId}
+        </if>
+        <if test="task !=null and task.status != null and task.status !=''">
+            and a.status = #{task.status}
+        </if>
+        <if test="task !=null and task.trainTarget != null and task.trainTarget !=''">
+            and a.train_target = #{task.trainTarget}
+        </if>
+        <if test="task !=null and task.dataScopeSql != null and task.dataScopeSql !=''">
+            ${task.dataScopeSql}
+        </if>
+    </where>
+    order by a.modify_date desc
+</select>
+
+<select id="queryById" parameterType="Long" resultType="com.ctdi.cnos.llm.beans.train.trainTaskDemo.TrainTaskVO">
+    select
+        <include refid="select_columns"/>,
+        a.training_loss,
+        a.loss_trend,
+        a.param as paramStr,
+        b."name" as modelName,
+        (select u.user_name from meta.mm_user u where u.id = a.creator_id) creatorName,
+        c.data_set_name as dataSetName
+    from train.mm_train_task_demo a
+    left join meta.mm_model b on a.model_id = b.id
+    left join meta.mm_data_set c on a.data_set_id = c.id
+    where a.id = #{id}
+</select>
+</mapper>

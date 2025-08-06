@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PromptTemplatesDao">
+    <resultMap id="BaseResultMap" type="com.ctdi.cnos.llm.beans.meta.prompt.PromptTemplates">
+        <id column="id" jdbcType="NUMERIC" property="id" />
+        <result column="template_name" jdbcType="VARCHAR" property="templateName" />
+        <result column="template_text" jdbcType="VARCHAR" property="templateText" />
+        <result column="creator_id" jdbcType="NUMERIC" property="creatorId" />
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="modifier_id" jdbcType="NUMERIC" property="modifierId" />
+        <result column="modify_date" jdbcType="TIMESTAMP" property="modifyDate" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, template_name, template_text, description
+    </sql>
+    <select id="queryById" parameterType="java.math.BigDecimal" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from meta.mm_prompt_templates
+        where id = #{id}
+    </select>
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.prompt.PromptTemplates">
+        select
+        <include refid="Base_Column_List" />
+        from meta.mm_prompt_templates
+        <where>
+            <if test="promptTemplates !=null and promptTemplates.id != null and promptTemplates.id !=''" >
+                and id = #{promptTemplates.id}
+            </if>
+            <if test="promptTemplates !=null and promptTemplates.templateName != null and promptTemplates.templateName !=''">
+                and template_name like concat('%', #{promptTemplates.templateName}, '%')
+            </if>
+            <if test="promptTemplates !=null and promptTemplates.templateText != null and promptTemplates.templateText !=''">
+                and template_text like concat('%', #{promptTemplates.templateText}, '%')
+            </if>
+            <if test="promptTemplates !=null and promptTemplates.creatorId != null and promptTemplates.creatorId !=''">
+                and creator_id = #{promptTemplates.creatorId}
+            </if>
+            <if test="promptTemplates !=null and promptTemplates.modifierId != null and promptTemplates.modifierId !=''">
+                and modifier_id = #{promptTemplates.modifierId}
+            </if>
+            <if test="promptTemplates !=null and promptTemplates.description != null and promptTemplates.description !=''">
+                and description like concat('%', #{promptTemplates.description}, '%')
+            </if>
+        </where>
+            ORDER BY create_date asc
+    </select>
+
+    <delete id="deleteById" parameterType="java.math.BigDecimal">
+        delete from meta.mm_prompt_templates
+        where id = #{id}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.ctdi.cnos.llm.beans.meta.prompt.PromptTemplates" useGeneratedKeys="true">
+        insert into meta.mm_prompt_templates (id, template_name, template_text, creator_id,
+                                           create_date, modifier_id, modify_date,
+                                           description)
+        values (#{id}, #{templateName}, #{templateText}, #{creatorId},
+                now(), #{modifierId}, now(),
+                #{description})
+    </insert>
+
+    <update id="updateById" parameterType="com.ctdi.cnos.llm.beans.meta.prompt.PromptTemplates">
+        update meta.mm_prompt_templates
+        <set>
+            <if test="templateName != null">
+                template_name = #{templateName},
+            </if>
+            <if test="templateText != null">
+                template_text = #{templateText},
+            </if>
+            <if test="modifierId != null">
+                modifier_id = #{modifierId},
+            </if>
+            <if test="description != null">
+                description = #{description},
+            </if>
+            modify_date = now()
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

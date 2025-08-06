@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.log.dao.MmModelMonitorModelDao">
+    <resultMap id="BaseResultMap" type="com.ctdi.cnos.llm.beans.log.MmModelMonitorModel">
+        <id column="id" jdbcType="NUMERIC" property="id" />
+        <result column="task_id" jdbcType="NUMERIC" property="taskId" />
+        <result column="model_call_date" jdbcType="TIMESTAMP" property="modelCallDate" />
+        <result column="model_call_date_days" jdbcType="NUMERIC" property="modelCallDateDays" />
+        <result column="model_call_date_hours" jdbcType="NUMERIC" property="modelCallDateHours" />
+        <result column="model_output_token" jdbcType="NUMERIC" property="modelOutputToken" />
+        <result column="model_input_token" jdbcType="NUMERIC" property="modelInputToken" />
+    </resultMap>
+</mapper>

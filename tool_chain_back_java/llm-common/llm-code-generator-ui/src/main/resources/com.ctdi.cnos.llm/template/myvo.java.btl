@@ -1,0 +1,42 @@
+package ${package.Entity};
+
+<% for(pkg in voConfig.importPackages){ %>
+import ${pkg};
+<% } %>
+import com.ctdi.cnos.llm.base.object.BaseVO;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+/**
+ * ${table.comment!} Vo对象。
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+@ApiModel(description = "${voConfig.className}对象")
+@Data
+<% if(entityHasSuperEntityClass && isNotEmpty(voConfig.superClass)){ %>
+public class ${voConfig.className} extends ${voConfig.superClass} {
+<% }else if(entitySerialVersionUID){ %>
+public class ${voConfig.className} implements Serializable {
+<% }else{ %>
+public class ${voConfig.className} {
+<% } %>
+
+<% for(field in table.fields){ %>
+    <% if(isNotEmpty(field.comment)){ %>
+    /**
+     * ${field.comment}
+     */
+    @ApiModelProperty(value = "${field.comment}")
+    <% } %>
+	<% if(field.propertyType=='Long'){ %>
+	@JsonSerialize(using = ToStringSerializer.class)
+	<% } %>
+	private ${field.propertyType} ${field.propertyName};
+	
+<% } %>
+}

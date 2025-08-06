@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.train.dao.DeployTaskDao">
+    <sql id="select_columns">
+        a.id,
+        a.model_id,
+        a.status,
+        a.deploy_url,
+        a.region_code,
+        a.agent_status,
+        a.register_status,
+        a.deploy_target,
+        a.submit_status,
+        a.register_id,
+        a.result,
+        a.creator_id,
+        a.create_date,
+        a.modifier_id,
+        a.modify_date,
+        a.deploy_belong,
+        a.project_space_id
+    </sql>
+    <update id="updateBatchDeployTask">
+        update train.mm_deploy_task
+        set deploy_url = (
+        select REGEXP_REPLACE(deploy_url, #{before}, #{after}, 'g')
+        from train.mm_deploy_task t where t.id = train.mm_deploy_task.id)
+        where id in
+              <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+    </update>
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.train.deployTask.DeployTaskVO">
+        select
+            <include refid="select_columns"/>,
+            b."name" model_name,
+            b.model_id base_model_id,
+            b."method" model_train_method,
+            b.type as trainType
+        from train.mm_deploy_task a,train.mm_train_task b
+        <where>
+            a.model_id = b.id
+            <if test="vo !=null and vo.modelName != null and vo.modelName !=''" >
+                AND b.name LIKE CONCAT('%', #{vo.modelName}, '%')
+            </if>
+            <if test="vo !=null and vo.status != null and vo.status !=''" >
+                AND a.status = #{vo.status}
+            </if>
+            <if test="vo !=null and vo.dataScopeSql != null and vo.dataScopeSql !=''">
+                ${vo.dataScopeSql}
+            </if>
+            <!-- and mds.ip != '' and mds.ip is not null -->
+        </where>
+        order by a.modify_date desc
+    </select>
+
+    <select id="queryById" resultType="com.ctdi.cnos.llm.beans.train.deployTask.DeployTaskVO">
+        select
+            <include refid="select_columns"/>,
+            b."name" model_name,
+            b.model_id base_model_id,
+            b."method" model_train_method
+        from train.mm_deploy_task a,train.mm_train_task b
+        where  a.model_id = b.id
+        and a.id = #{id}
+    </select>
+
+    <select id="queryAllDeployedModel" resultType="com.ctdi.cnos.llm.beans.train.deployTask.DeployTaskVO" parameterType="com.ctdi.cnos.llm.beans.train.deployTask.DeployTask">
+        select mdt.id, mdt.model_id as modelId, mdt.creator_id as creatorId, mdt.deploy_url as deployUrl,
+               mtt.name as modelName, mdt.deploy_target as deployTarget, mdt.create_date as createDate
+        from train.mm_deploy_task mdt
+                 inner join train.mm_train_task mtt on mdt.model_id = mtt.id
+                 inner join meta.mm_data_set mds on mtt.data_set_id = mds.id
+        where mds.set_type = '1'
+          and mdt.status = 'completed'
+          <if test="vo.creatorId != null">
+              and mdt.creator_id = #{vo.creatorId}
+          </if>
+        <if test="vo.projectSpaceId != null">
+            and mdt.deploy_belong = '2'
+            and mdt.project_space_id = #{vo.projectSpaceId}
+        </if>
+          and mdt.deploy_url is not null
+          and mdt.deploy_url != '';
+    </select>
+    <select id="queryCompletedTestDeployTask" resultType="com.ctdi.cnos.llm.beans.train.deployTask.DeployTask">
+        select * from train.mm_deploy_task mdt
+        where mdt.status = 'completed'
+          and mdt.deploy_type = '2'
+        order by mdt.modify_date asc
+            limit 1;
+    </select>
+
+</mapper>
+

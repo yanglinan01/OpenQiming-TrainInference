@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PrTestSetEvaluationScoreDao">
+
+
+    <delete id="deleteByEvaluationId">
+        DELETE FROM meta.mm_pr_test_set_evaluation_score
+        WHERE evaluation_detail_id IN (
+        SELECT id
+        FROM meta.mm_pr_test_set_evaluation_detail
+        WHERE test_set_evaluation_id = #{testSetEvaluationId}
+        )
+    </delete>
+</mapper>

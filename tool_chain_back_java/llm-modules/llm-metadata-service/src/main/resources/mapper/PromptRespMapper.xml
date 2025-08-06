@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PromptRespDao">
+
+    <resultMap type="com.ctdi.cnos.llm.beans.meta.prompt.PromptResp" id="PromptRespMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="dataSetId" column="data_set_id" jdbcType="VARCHAR"/>
+        <result property="context" column="context" jdbcType="VARCHAR"/>
+        <result property="creatorId" column="creator_id" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="modifierId" column="modifier_id" jdbcType="VARCHAR"/>
+        <result property="modifyDate" column="modify_date" jdbcType="TIMESTAMP"/>
+        <result property="isValid" column="is_valid" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryByDataSetId" resultType="com.ctdi.cnos.llm.beans.meta.prompt.PromptResp">
+        select * from meta.mm_prompt_resp where data_set_id = #{dataSetId}
+    </select>
+    <select id="queryById" resultType="com.ctdi.cnos.llm.beans.meta.prompt.PromptResp">
+        select * from meta.mm_prompt_resp where id = #{id}
+    </select>
+
+    <delete id="deleteByDataSetId">
+        delete from meta.mm_prompt_resp where data_set_id = #{dataSetId} and creator_id = #{creatorId}
+    </delete>
+
+    <insert id="add">
+        insert into meta.mm_prompt_resp(id, data_set_id, context, creator_id, create_date, modifier_id, modify_date)
+        values
+            (#{promptResp.id}, #{promptResp.dataSetId}, #{promptResp.context}, #{promptResp.creatorId}, now(),
+             #{promptResp.modifierId}, now())
+    </insert>
+
+</mapper>
+

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.ProjectUserRoleDao">
+
+    <update id="updateByEntity" parameterType="com.ctdi.cnos.llm.beans.meta.projectSpace.ProjectUserRole">
+        UPDATE meta.mm_project_user_role
+        <set>
+            <if test="entity.roleId != null">
+                role_id = #{entity.roleId},
+            </if>
+        </set>
+        where project_id = #{entity.projectId} and user_id = #{entity.userId}
+    </update>
+
+    <select id="selectByCondition" resultType="com.ctdi.cnos.llm.beans.meta.projectSpace.ProjectUserRole">
+        SELECT *
+        FROM meta.mm_project_user_role
+        <where>
+            <if test="projectId != null">
+                AND project_id = #{projectId}
+            </if>
+            <if test="roleId != null">
+                AND role_id = #{roleId}
+            </if>
+            <if test="userIds != null and !userIds.isEmpty()">
+                AND user_id IN
+                <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+                    #{userId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>

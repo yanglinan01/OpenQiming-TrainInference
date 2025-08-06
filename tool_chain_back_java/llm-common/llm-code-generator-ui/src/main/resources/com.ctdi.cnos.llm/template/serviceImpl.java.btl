@@ -1,0 +1,33 @@
+package ${package.ServiceImpl};
+
+import cn.hutool.extra.spring.SpringUtil;
+import com.ctdi.cnos.llm.base.object.LambdaQueryWrapperX;
+import com.ctdi.cnos.llm.base.object.QueryParam;
+import com.ctdi.cnos.llm.base.service.BaseService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+/**
+ * ${table.comment!} 数据操作服务类
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<%
+   var serviceInstanceName = @cn.hutool.core.util.StrUtil.lowerFirst(table.serviceName);
+%>
+@RequiredArgsConstructor
+@Service("${serviceInstanceName}")
+<% if(kotlin){ %>
+open class ${table.serviceImplName} : ${superServiceImplClass}<${table.mapperName}, ${entity}>()<% if(table.serviceInterface){ %>, ${table.serviceName}<% } %> {
+
+}
+<% }else{ %>
+public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}, ${voConfig.className}><% if(table.serviceInterface){ %> implements ${table.serviceName}<% } %> {
+
+    @Override
+    public void configureQueryWrapper(LambdaQueryWrapperX<${entity}> wrapper, QueryParam queryParam) {
+        ${entity} filter = queryParam.getFilterDto(${entity}.class);
+    }
+}
+<% } %>

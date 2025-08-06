@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.OrderUserDao">
+
+    <insert id="insertBatch" parameterType="list">
+        insert into meta.mm_order_user (
+        id,
+        order_code,
+        tool_chain_name,
+        tool_chain_oa_name,
+        province_company,
+        tool_chain_phone,
+        permission_state,
+        create_date,
+        modify_date,
+        creator_id,
+        modifier_id,
+        remark,
+        pass_status,
+        pass_time,
+        order_id
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},
+            #{item.orderCode},
+            #{item.toolChainName},
+            #{item.toolChainOAName},
+            #{item.provinceCompany},
+            #{item.toolChainPhone},
+            #{item.permissionState},
+            #{item.createDate},
+            #{item.modifyDate},
+            #{item.creatorId},
+            #{item.modifierId},
+            #{item.remark},
+            #{item.passStatus},
+            #{item.passTime},
+            #{item.orderId}
+            )
+        </foreach>
+    </insert>
+</mapper>

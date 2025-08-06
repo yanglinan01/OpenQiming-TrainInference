@@ -1,0 +1,19 @@
+ctg:
+  cache:
+    database: 10
+    host: 10.141.179.194:20260
+    monitorTimeout: 30000
+    password: _1mX5YnSmnmn1pGD
+    period: 30000
+    pool:
+      maxIdle: 5
+      maxTotal: 10
+      maxWaitMillis: 30000
+      minIdle: 3
+spring:
+  redis:
+    # host: 127.0.0.1
+    host: 192.168.101.111
+    port: 6379
+    password: cnos_cache#cache@2022
+    timeout: 3000

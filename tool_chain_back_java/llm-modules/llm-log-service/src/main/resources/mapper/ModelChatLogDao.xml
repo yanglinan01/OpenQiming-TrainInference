@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.log.dao.ModelChatLogDao">
+
+    <select id="queryExpiredDeployTask" resultType="com.ctdi.cnos.llm.beans.log.chat.ModelChatLog">
+        SELECT * FROM (
+        SELECT *, ROW_NUMBER()
+        OVER (PARTITION BY mcl.model_chat_id
+        ORDER BY mcl.send_time DESC) AS rn
+        FROM log.mm_model_chat_log mcl
+        WHERE mcl.model_chat_type = 3
+        ) ranked_logs
+        WHERE rn = 1
+        AND ranked_logs.send_time &lt; (CURRENT_DATE - INTERVAL '1 day' * #{offsetDay})
+    </select>
+
+    <select id="queryLastSendTimeByModelId" resultType="com.ctdi.cnos.llm.beans.log.chat.ModelChatLog">
+        select a.model_chat_id, max(a.send_time) send_time
+        FROM log.mm_model_chat_log a
+        where a.model_chat_id in
+        <foreach collection="modelIdList" item="modelId" open="(" separator="," close=")">
+            #{modelId}
+        </foreach>
+        group by a.model_chat_id
+    </select>
+
+    <select id="getHourlyTokenStats" resultType="com.ctdi.cnos.llm.beans.log.chat.HourlyTokenStats">
+		WITH RECURSIVE time_series AS (
+			SELECT
+				#{startTime}::timestamp AS hour
+			UNION ALL
+			SELECT 
+				hour + INTERVAL '1 hour'
+			FROM 
+				time_series
+			WHERE
+				hour + INTERVAL '1 hour' &lt;= #{endTime}::timestamp
+		),
+		data AS (
+			SELECT 
+				DATE_TRUNC('hour', send_time) AS hour,
+				SUM(prompt_tokens) AS prompt_tokens_sum,
+				SUM(completion_tokens) AS completion_tokens_sum,
+				SUM(total_tokens) AS total_tokens_sum
+			FROM 
+				log.mm_model_chat_log
+			WHERE
+				model_chat_id = #{modelId}
+				AND send_time BETWEEN #{startTime}::timestamp AND #{endTime}::timestamp
+				AND send_user_id IS NOT NULL
+			GROUP BY 
+				DATE_TRUNC('hour', send_time)
+		)
+		SELECT 
+			ts.hour,
+			COALESCE(d.prompt_tokens_sum, 0) AS prompt_tokens_sum,
+			COALESCE(d.completion_tokens_sum, 0) AS completion_tokens_sum,
+			COALESCE(d.total_tokens_sum, 0) AS total_tokens_sum
+		FROM 
+			time_series ts
+		LEFT JOIN 
+			data d ON ts.hour = d.hour
+		ORDER BY 
+			ts.hour
+    </select>
+
+    <select id="getHourlyCallStats" resultType="com.ctdi.cnos.llm.beans.log.chat.HourlyCallStats">
+		WITH RECURSIVE time_series AS (
+			SELECT
+				#{startTime}::timestamp AS hour
+			UNION ALL
+			SELECT 
+				hour + INTERVAL '1 hour'
+			FROM 
+				time_series
+			WHERE
+				hour + INTERVAL '1 hour' &lt;= #{endTime}::timestamp
+		),
+		data AS (
+			SELECT 
+				DATE_TRUNC('hour', send_time) AS hour,
+				COUNT(*) AS total_calls
+			FROM 
+				log.mm_model_chat_log
+			WHERE
+				model_chat_id = #{modelId}
+				AND send_time BETWEEN #{startTime}::timestamp AND #{endTime}::timestamp
+				AND send_user_id IS NOT NULL
+			GROUP BY 
+				DATE_TRUNC('hour', send_time)
+		)
+		SELECT 
+			ts.hour,
+			COALESCE(d.total_calls, 0) AS total_calls
+		FROM 
+			time_series ts
+		LEFT JOIN 
+			data d ON ts.hour = d.hour
+		ORDER BY 
+			ts.hour
+	</select>
+
+    <select id="getModelCallSummary" resultType="com.ctdi.cnos.llm.beans.log.chat.ModelCallSummary">
+		SELECT 
+			model_chat_id,
+			SUM(prompt_tokens) AS total_prompt_tokens,
+			SUM(completion_tokens) AS total_completion_tokens,
+			SUM(total_tokens) AS total_tokens,
+			COUNT(*) AS total_calls
+		FROM 
+			log.mm_model_chat_log
+		WHERE
+			model_chat_id = #{modelId}
+			AND send_user_id IS NOT NULL
+		GROUP BY 
+			model_chat_id
+	</select>
+</mapper>

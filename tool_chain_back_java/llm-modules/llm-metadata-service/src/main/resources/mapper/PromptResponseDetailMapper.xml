@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.PromptResponseDetailDao">
+
+    <resultMap type="com.ctdi.cnos.llm.beans.meta.prompt.PromptResponseDetail" id="PromptResponseDetailMap">
+        <result property="id" column="id" jdbcType="NUMERIC"/>
+        <result property="dataSetFileId" column="data_set_file_id" jdbcType="VARCHAR"/>
+        <result property="questionId" column="question_id" jdbcType="VARCHAR"/>
+        <result property="rank" column="rank" jdbcType="VARCHAR"/>
+        <result property="prompt" column="prompt" jdbcType="VARCHAR"/>
+        <result property="response" column="response" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="VARCHAR"/>
+        <result property="creatorId" column="creator_id" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="modifierId" column="modifier_id" jdbcType="VARCHAR"/>
+        <result property="modifyDate" column="modify_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into meta.mm_prompt_response_detail (id,data_set_file_id,question_id,rank,prompt,response,status,
+        creator_id,create_date,modifier_id,modify_date)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.dataSetFileId},#{item.questionId},#{item.rank},#{item.prompt},#{item.response},#{item.status},
+            #{item.creatorId},#{item.createDate},#{item.modifierId},#{item.modifyDate}
+            )
+        </foreach>
+    </insert>
+
+
+    <insert id="addBatch" parameterType="java.util.List">
+        INSERT INTO meta.mm_prompt_response_detail (id, data_set_file_id, question_id, rank, prompt, response, creator_id, modifier_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},
+             #{item.dataSetFileId},
+             #{item.questionId},
+             #{item.rank},
+             #{item.prompt},
+             #{item.response},
+             #{item.creatorId},
+             #{item.modifierId}
+             )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByDataSetFileId">
+        delete from meta.mm_prompt_response_detail where data_set_file_id = #{dataSetFileId}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.DictionaryDao">
+
+    <sql id="select_columns">
+        a.dict_id as dictId,
+        a.dict_type as dictType,
+        a.dict_name as dictName,
+        a.status as dictStatus,
+        b.dict_code as dictItemId,
+        b.dict_sort as dictItemSort,
+        b.dict_label as dictItemLabel,
+        b.dict_value as dictItemValue,
+        b.css_class as dictItemCssClass,
+        b.list_class as dictItemListClass,
+        b.status as dictItemStatus,
+        b.parent_id as dictItemParentId,
+        b.ext_field1 as dictItemExtField1,
+        b.ext_field2 as dictItemExtField2,
+        b.ext_field3 as dictItemExtField3
+    </sql>
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.dictionary.DictionaryVO">
+        select
+            <include refid="select_columns"/>
+        from meta.mm_dict_type a
+        left join meta.mm_dict_data b on a.dict_type = b.dict_type
+        <where>
+            <if test="dictStatus !=null and dictStatus !=''">
+                and a.status = #{dictStatus} and b.status = #{dictStatus}
+            </if>
+            <if test="dictType !=null and dictType !=''">
+                and a.dict_type = #{dictType}
+            </if>
+            <if test="dictId !=null and dictId !=''">
+                and a.dict_id = #{dictId}
+            </if>
+            <if test="dictItemValue !=null and dictItemValue !=''">
+                and b.dict_value = #{dictItemValue}
+            </if>
+        </where>
+        order by a.dict_type,b.dict_sort
+    </select>
+
+
+    <insert id="insertDictType" parameterType="com.ctdi.cnos.llm.beans.meta.dictionary.DictType">
+        insert into meta.mm_dict_type
+            (dict_id,dict_name,dict_type,status,parent_id,creator_id,create_date,modifier_id,modify_date,remark)
+        values
+            (#{dictId},#{dictName},#{dictType},#{status},#{parentId},#{creatorId},now(),#{modifierId},now(),#{remark})
+    </insert>
+
+    <update id="updateDictTypeById" parameterType="com.ctdi.cnos.llm.beans.meta.dictionary.DictType">
+        update meta.mm_dict_type
+        <set>
+            <if test="dictName != null and dictName !=''">
+                dict_name = #{dictName},
+            </if>
+            <if test="dictType != null and dictType !=''">
+                dict_type = #{dictType},
+            </if>
+            <if test="status != null and status !=''">
+                status = #{status},
+            </if>
+            <if test="parentId != null and parentId !=''">
+                parent_id = #{parentId},
+            </if>
+            <if test="modifierId != null and modifierId !=''">
+                modifier_id = #{modifierId},
+            </if>
+            <if test="remark != null and remark !=''">
+                remark = #{remark},
+            </if>
+            modify_date = now()
+        </set>
+        where dict_id = #{dictId}
+    </update>
+
+    <delete id="deleteDictTypeByDictType" parameterType="String">
+        update meta.mm_dict_type
+        <set>
+            <if test="modifierId != null and modifierId !=''">
+                modifier_id = #{modifierId},
+            </if>
+            status = '1',
+            modify_date = now()
+        </set>
+        where dict_type = #{dictType}
+    </delete>
+
+    <insert id="insertDictData" parameterType="com.ctdi.cnos.llm.beans.meta.dictionary.DictData">
+        insert into meta.mm_dict_data
+            (dict_code,dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,
+             parent_id,ext_field1,ext_field2,ext_field3,creator_id,create_date,modifier_id,modify_date,remark)
+        values
+            (#{dictCode},#{dictSort},#{dictLabel},#{dictValue},#{dictType},#{cssClass},#{listClass},#{isDefault},#{status},
+             #{parentId},#{extField1},#{extField2},#{extField3},#{creatorId},now(),#{modifierId},now(),#{remark})
+    </insert>
+
+    <update id="updateDictDataById" parameterType="com.ctdi.cnos.llm.beans.meta.dictionary.DictData">
+        update meta.mm_dict_data
+        <set>
+            <if test="dictSort != null and dictSort !=''">
+                dict_sort = #{dictSort},
+            </if>
+            <if test="dictLabel != null and dictLabel !=''">
+                dict_label = #{dictLabel},
+            </if>
+            <if test="dictValue != null and dictValue !=''">
+                dict_value = #{dictValue},
+            </if>
+            <if test="dictType != null and dictType !=''">
+                dict_type = #{dictType},
+            </if>
+            <if test="cssClass != null and cssClass !=''">
+                css_class = #{cssClass},
+            </if>
+            <if test="listClass != null and listClass !=''">
+                list_class = #{listClass},
+            </if>
+            <if test="isDefault != null and isDefault !=''">
+                is_default = #{isDefault},
+            </if>
+            <if test="status != null and status !=''">
+                status = #{status},
+            </if>
+            <if test="parentId != null and parentId !=''">
+                parent_id = #{parentId},
+            </if>
+            <if test="extField1 != null and extField1 !=''">
+                ext_field1 = #{extField1},
+            </if>
+            <if test="extField2 != null and extField2 !=''">
+                ext_field2 = #{extField2},
+            </if>
+            <if test="extField3 != null and extField3 !=''">
+                ext_field3 = #{extField3},
+            </if>
+            <if test="modifierId != null and modifierId !=''">
+                modifier_id = #{modifierId},
+            </if>
+            <if test="remark != null and remark !=''">
+                remark = #{remark},
+            </if>
+            modify_date = now()
+        </set>
+        where dict_code = #{dictCode}
+    </update>
+    <delete id="batchDeleteDictDataByDictType" parameterType="String">
+        update meta.mm_dict_data
+        <set>
+            <if test="modifierId != null and modifierId !=''">
+                modifier_id = #{modifierId},
+            </if>
+            status = '1',
+            modify_date = now()
+        </set>
+        where dict_type = #{dictType}
+    </delete>
+</mapper>

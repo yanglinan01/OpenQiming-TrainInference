@@ -1,0 +1,87 @@
+
+#nacos通用信息配置， 部署时通过-D传递
+nacos:
+  username: nacos
+  commonGroup: common
+  # 开发环境
+  password: nacos
+  namespace: llm-local
+  addr: localhost:8848
+
+spring:
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  #t通用得日期转换格式,如果有特定格式可以使用JsonFormat优先级高
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true
+    nacos:
+      server-addr: ${nacos.addr}
+      username: ${nacos.username}
+      password: ${nacos.password}
+      discovery:
+        enabled: true
+        namespace: ${nacos.namespace}
+        cluster-name: default
+        ephemeral: true
+        group: DEFAULT_GROUP
+      config:
+        enabled: true
+        namespace: ${nacos.namespace}
+        group: llm
+        file-extension: yml
+        shared-configs:
+          - dataId: common-application.yml
+            group: ${nacos.commonGroup}
+            refresh: true
+          - dataId: common-server.yml
+            group: ${nacos.commonGroup}
+            refresh: false
+          - dataId: common-db.yml
+            group: ${nacos.commonGroup}
+            refresh: false
+          - dataId: common-cache.yml
+            group: ${nacos.commonGroup}
+            refresh: false
+          - dataId: common-log.yml
+            group: ${nacos.commonGroup}
+            refresh: false
+        refresh-enabled: true
+
+# 日志记录。
+logging:
+  level:
+    # 默认日志记录级别。
+    root: info
+  file:
+    # 日志文件名。
+    name: ./logs/${spring.application.name}.log
+  logback:
+    rollingpolicy:
+      # 要保留的归档日志文件的最大数量(默认是7)。
+      max-history: 20
+      # 最大日志文件大小(默认是10MB)。
+      max-file-size: 10240MB
+      # 存档日志文件名的模式。
+      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz
+      # 是否在启动时清理归档日志文件。
+      clean-history-on-start: false
+      # 要保留的日志备份的总大小。
+      total-size-cap: 0B
+  pattern:
+    # 日期和时间 日志级别 进程ID --- [线程名 ] 记录类 方法名: 方法所在行 : 日志消息
+    console: '%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(%-25.-25method{24}:%4.4line){green} %clr(:){cyan} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+    file: '%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} %-25.-25method{24}:%4.4line : %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}'
+
+
+
+
+

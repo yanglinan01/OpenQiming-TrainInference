@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ctdi.cnos.llm.metadata.dao.ModelTrainParamDao">
+
+    <select id="queryList" resultType="com.ctdi.cnos.llm.beans.meta.model.ModelTrainParamVO">
+        select a.*,
+               a.check_value as checkValueStr,
+               a.default_value as defaultValueStr,
+               b.train_type,
+               b.train_method,
+               b.model_id
+        from meta.mm_model_train_param a,meta.mm_model_train b
+        <where>
+            a.model_train_id = b.id
+            <if test="trainParam !=null and trainParam.id != null and trainParam.id !=''">
+                and a.id = #{trainParam.id}
+            </if>
+            <if test="trainParam !=null and trainParam.displayName != null and trainParam.displayName !=''">
+                and upper(a.display_name) like concat('%', upper(#{trainParam.displayName}), '%')
+            </if>
+            <if test="trainParam !=null and trainParam.modelTrainId != null and trainParam.modelTrainId !=''">
+                and a.model_train_id = #{trainParam.modelTrainId}
+            </if>
+            <if test="trainParam !=null and trainParam.modelId != null and trainParam.modelId !=''">
+                and b.model_id = #{trainParam.modelId}
+            </if>
+            <if test="trainParam !=null and trainParam.type != null and trainParam.type !=''">
+                and b.type = #{trainParam.type}
+            </if>
+            <if test="trainParam !=null and trainParam.trainType != null and trainParam.trainType !=''">
+                and b.train_type = #{trainParam.trainType}
+            </if>
+            <if test="trainParam !=null and trainParam.trainMethod != null and trainParam.trainMethod !=''">
+                and b.train_method = #{trainParam.trainMethod}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryById" resultType="com.ctdi.cnos.llm.beans.meta.model.ModelTrainParamVO">
+        select a.*,
+               a.check_value as checkValueStr,
+               a.default_value as defaultValueStr
+        from meta.mm_model_train_param a
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into meta.mm_model_train_param (id,display_name,be_key,fe_key,type,"group",check_type,
+        check_value,step,default_value,description,model_train_id,
+        creator_id,create_date,modifier_id,modify_date)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.displayName},#{item.beKey},#{item.feKey},#{item.type},#{item.group},#{item.checkType},
+            #{item.checkValueStr},#{item.step},#{item.defaultValueStr},#{item.description},#{item.modelTrainId},
+            #{item.creatorId},#{item.createDate},#{item.modifierId},#{item.modifyDate}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteByModelTrainId" parameterType="Long">
+        delete from meta.mm_model_train_param a where a.model_train_id = #{modelTrainId})
+    </delete>
+
+    <delete id="deleteByModelId" parameterType="Long">
+        delete from meta.mm_model_train_param a where exists(select 1 from meta.mm_model_train b where b.id = a.model_train_id and b.model_id = #{modelId})
+    </delete>
+
+</mapper>
